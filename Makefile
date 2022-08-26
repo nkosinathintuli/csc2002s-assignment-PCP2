@@ -12,7 +12,7 @@ DOCDIR=doc
 $(BINDIR)/%.class:$(SRCDIR)/%.java
 	$(JAVAC) -d $(BINDIR)/ -cp $(BINDIR) $<
 
-CLASSES= HungryWordMover.class
+CLASSES= WordDictionary.class FallingWord.class Score.class ScoreUpdater.class GamePanel.class WordMover.class CatchWord.class TypingTutorApp.class
 CLASS_FILES=$(CLASSES:%.class=$(BINDIR)/%.class)
 
 default: $(CLASS_FILES)
@@ -20,7 +20,7 @@ clean:
 	rm $(BINDIR)/*.class
 
 run: $(CLASS_FILES)
-	java -cp $(BINDIR) HungryWordMover $(input)
+	java -cp $(BINDIR) typingTutor.TypingTutorApp $(input)
 
 docs:
 	javadoc -d $(DOCDIR)/ $(SRCDIR)/*.java

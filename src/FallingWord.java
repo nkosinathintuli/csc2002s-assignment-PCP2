@@ -96,7 +96,7 @@ public class FallingWord {
 	public synchronized boolean matchWord(String typedText) {
 		//System.out.println("Matching against: "+text);
 		if (typedText.equals(this.word)) {
-			resetWord();
+			// resetWord(); //we don't want to reset the word here, we want to check for a duplicate first in the CatchWord class
 			return true;
 		}
 		else

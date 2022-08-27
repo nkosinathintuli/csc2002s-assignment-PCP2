@@ -22,11 +22,13 @@ public class TypingTutorApp {
    	static int frameX=1000;
 	static int frameY=600;
 	static int yLimit=480;
+	static int xLimit=800; // for hungry word *
 
 	static WordDictionary dict = new WordDictionary(); //use default dictionary, to read from file eventually
 
 	static FallingWord[] words;
 	static WordMover[] wrdShft;
+	static HungryWordMover hungryWrdShft; // for the hungry word *
 	static CountDownLatch startLatch; //so threads can start at once
 	
 	static AtomicBoolean started;  
@@ -132,7 +134,7 @@ public class TypingTutorApp {
 					  pause.set(false); //set for safety
 					  gameWindow.repaint();
 					 //word movers waiting on starting line
-					   	for (int i=0;i<noWords;i++) {
+					   	for (int i=0;i<noWords-1;i++) {
 					     		try {
 					     			if (wrdShft[i].isAlive())	{
 									wrdShft[i].join();}
@@ -141,6 +143,12 @@ public class TypingTutorApp {
 									e1.printStackTrace();
 								}
 					    }
+					try{
+						if (hungryWrdShft.isAlive()) hungryWrdShft.join();
+					} catch (InterruptedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}
 		});  //finish addActionListener
 					
@@ -185,17 +193,20 @@ public class TypingTutorApp {
 	public static void createWordMoverThreads() {
 		score.reset();
 	  	//initialize shared array of current words with the words for this game
-		for (int i=0;i<noWords;i++) {
+		for (int i=0;i<noWords-1;i++) {
 			words[i]=new FallingWord(dict.getNewWord(),gameWindow.getValidXpos(),yLimit);
 		}
+		words[noWords-1]=new FallingWord(dict.getNewWord(),0,yLimit,gameWindow.getValidYpos(),xLimit);
 		//create threads to move them
-	    for (int i=0;i<noWords;i++) {
+	    for (int i=0;i<noWords-1;i++) {
 	    		wrdShft[i] = new WordMover(words[i],dict,score,startLatch,done,pause);
 	    }
+		hungryWrdShft = new HungryWordMover(words[noWords-1],dict,score,startLatch,done,pause);
         //word movers waiting on starting line
-     	for (int i=0;i<noWords;i++) {
+     	for (int i=0;i<noWords-1;i++) {
      		wrdShft[i] .start();
      	}
+		hungryWrdShft.start();
 	}
 	
 public static String[] getDictFromFile(String filename) {
@@ -243,7 +254,8 @@ public static void main(String[] args) {
 		FallingWord.dict=dict; //set the class dictionary for the words.
 		
 		words = new FallingWord[noWords];  //array for the  current chosen words from dict
-		wrdShft = new WordMover[noWords]; //array for the threads that animate the words
+		wrdShft = new WordMover[noWords-1]; //array for the threads that animate the words
+		// there'll be one less word mover than words as the hungry word mover is a special case
 		
 		CatchWord.setWords(words);  //class setter - static method
 		CatchWord.setScore(score);  //class setter - static method

@@ -17,7 +17,7 @@ public class GamePanel extends JPanel implements Runnable {
 		private int noWords;
 		private final static int borderWidth=25; //appearance - border
 
-		GamePanel(FallingWord[] words, int maxY,	
+		GamePanel(FallingWord[] words, int maxY,	//maxY seem irrelevant *
 				 AtomicBoolean d, AtomicBoolean s, AtomicBoolean w) {
 			this.words=words; //shared word list
 			noWords = words.length; //only need to do this once
@@ -62,6 +62,12 @@ public class GamePanel extends JPanel implements Runnable {
 			int width = getWidth()-borderWidth*4;
 			int x= (int)(Math.random() * width);
 			return x;
+		}
+
+		public int getValidYpos() {
+			int height = getHeight()-borderWidth*4;
+			int y= (int)(Math.random() * height);
+			return y;
 		}
 		
 		public void run() {

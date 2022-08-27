@@ -40,12 +40,12 @@ public class CatchWord extends Thread {
 					if(words[i].matchWord(target)){ // continue to look for another match
 						if(match.getY()<words[i].getY()){
 							match=words[i]; //save the one that is lower on the screen
-							break;
+							//break; //stop looking for duplicates as soon as you find the first one
 						}
 					}
 					i++;
 				}
-				match.resetWord();
+				match.resetWord(); // reseting the falling word here instead of in the matchWord method in the falling word class
 				System.out.println( " score! '" + target); //for checking
 				score.caughtWord(target.length());	
 				//FallingWord.increaseSpeed();

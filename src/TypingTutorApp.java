@@ -196,7 +196,7 @@ public class TypingTutorApp {
 		for (int i=0;i<noWords-1;i++) {
 			words[i]=new FallingWord(dict.getNewWord(),gameWindow.getValidXpos(),yLimit);
 		}
-		words[noWords-1]=new FallingWord(dict.getNewWord(),0,yLimit,gameWindow.getValidYpos(),xLimit);
+		words[noWords-1]=new FallingWord(dict.getNewWord(),0,yLimit,gameWindow.getValidYpos(),xLimit, true);
 		//create threads to move them
 	    for (int i=0;i<noWords-1;i++) {
 	    		wrdShft[i] = new WordMover(words[i],dict,score,startLatch,done,pause);

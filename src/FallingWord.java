@@ -8,6 +8,7 @@ public class FallingWord {
 	private int maxY; //maximum height
 	private boolean dropped; //flag for if user does not manage to catch word in time
 	private boolean drifted; //flag for if word has drifted off the screen to the right *
+	private boolean isHungry;
 
 	private int fallingSpeed; //how fast this word is
 	private static int maxWait=1000;
@@ -23,6 +24,7 @@ public class FallingWord {
 		maxX=500;
 		dropped=false;
 		drifted=false;
+		isHungry=false;
 		fallingSpeed=(int)(Math.random() * (maxWait-minWait)+minWait); 
 	}
 	
@@ -37,10 +39,11 @@ public class FallingWord {
 		this.maxY=maxY;
 	}
 
-	FallingWord(String text, int x, int maxY, int y, int maxX){ // exetended constructor *
+	FallingWord(String text, int x, int maxY, int y, int maxX, boolean isHungry){ // exetended constructor *
 		this(text,x,maxY);
 		this.y=y;
 		this.maxX=maxX;
+		this.isHungry=isHungry;
 	}
 	
 	public static void increaseSpeed( ) {
@@ -96,8 +99,11 @@ public class FallingWord {
 		setX(x);
 	}
 	public synchronized void resetPos() {
-		setY(0); 
-		setX(0); 
+		if (isHungry) {
+			setX(0);
+		} else {
+			setY(0);
+		}
 	}
 
 	public synchronized void resetWord() {

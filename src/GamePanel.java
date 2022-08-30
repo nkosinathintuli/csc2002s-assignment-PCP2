@@ -3,6 +3,8 @@ package typingTutor;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Font;
+import java.awt.geom.Rectangle2D;
+import java.awt.FontMetrics;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -16,10 +18,12 @@ public class GamePanel extends JPanel implements Runnable {
 		private FallingWord[] words;
 		private int noWords;
 		private final static int borderWidth=25; //appearance - border
+		private int maxY;
 
 		GamePanel(FallingWord[] words, int maxY,	//maxY seem irrelevant *
 				 AtomicBoolean d, AtomicBoolean s, AtomicBoolean w) {
 			this.words=words; //shared word list
+			this.maxY=maxY;
 			noWords = words.length; //only need to do this once
 			done=d; //REMOVE
 			started=s; //REMOVE
@@ -43,15 +47,15 @@ public class GamePanel extends JPanel implements Runnable {
 		    }
 		    else if (!done.get()) {
 		    	for (int i=0;i<noWords-1;i++){	    	
-		    		g.drawString(words[i].getWord(),words[i].getX()+borderWidth,words[i].getY());	
+		    		g.drawString(words[i].getWord(),words[i].getX()+borderWidth,words[i].getY());
+					//if (i!=noWords-1) collide(words[i],i,g);
+		    	
 		    	}
 				g.setColor(Color.green); //set the colour of the hungry word
-		    	//g.fillRect(borderWidth,0,width,borderWidth);
+		    	g.fillRect(borderWidth,height,0,borderWidth); 
 				g.drawString(words[noWords-1].getWord(),words[noWords-1].getX()+borderWidth,words[noWords-1].getY());
 		    	g.setColor(Color.lightGray); //change colour of pen
-		    	g.fillRect(borderWidth,0,width,borderWidth);
-				
-			
+		    	g.fillRect(borderWidth,0,width,borderWidth);			
 		   }
 		   else { if (won.get()) {
 			   g.setFont(new Font("Arial", Font.BOLD, 36));
@@ -61,6 +65,7 @@ public class GamePanel extends JPanel implements Runnable {
 			   g.drawString("Game over!",width/2,height/2);	
 		   }
 		   }
+		   
 		}
 		
 		public int getValidXpos() {
@@ -73,6 +78,38 @@ public class GamePanel extends JPanel implements Runnable {
 			int height = getHeight()-borderWidth*4;
 			int y= (int)(Math.random() * height);
 			return y;
+		}
+
+		public void collide(FallingWord word, int pos,Graphics g) {
+			FontMetrics fm = g.getFontMetrics(g.getFont());
+			Rectangle2D bounds = fm.getStringBounds(word.getWord(), g);
+			FallingWord theword = word;
+			int deltaXa = (int)bounds.getWidth();
+			int deltaYa = (int)bounds.getHeight();
+			int Xa = word.getX();
+			int Ya = word.getY();
+			int Xa1 = Xa + deltaXa;
+			int Ya1 = Ya + deltaYa;
+			bounds = fm.getStringBounds(words[noWords-1].getWord(), g);
+			int deltaXb  = (int)bounds.getWidth();
+			int deltaYb = (int)bounds.getHeight();
+			int Xb = words[noWords-1].getX();
+			int Yb = words[noWords-1].getY();
+			int Xb1 = Xb + deltaXb;
+			int Yb1 = Yb + deltaYb;
+			boolean collision = false;
+			collision = (Xa1 >= Xb && Xa1 <= Xb1 && Ya1 >= Yb && Ya1 <= Yb1);
+			collision = collision || (Xa >= Xb && Xa <= Xb1 && Ya1 >= Yb && Ya1 <= Yb1);
+			collision = collision || (Xa1 >= Xb && Xa1 <= Xb1 && Ya >= Yb && Ya <= Yb1);
+			collision = collision || (Xa >= Xb && Xa <= Xb1 && Ya >= Yb && Ya <= Yb1);
+			
+			//collision = (Xa1 >= Xb && Ya1 >= Yb || Xa <= Xb1 && Ya <= Yb1 || Xa1 >= Xb && Ya <= Yb1 || Xa <= Xb1 && Ya1 >= Yb);
+			if(collision) {
+				theword.setY(maxY+1);
+				words[pos]= theword;
+				//System.out.print(theword.getWord());
+			}
+
 		}
 		
 		public void run() {

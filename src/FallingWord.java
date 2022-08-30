@@ -21,10 +21,10 @@ public class FallingWord {
 		x=0;
 		y=0;	
 		maxY=300;
-		maxX=500;
+		maxX=500; //*
 		dropped=false;
 		drifted=false;
-		isHungry=false;
+		isHungry=false; // keep track of hungry word *
 		fallingSpeed=(int)(Math.random() * (maxWait-minWait)+minWait); 
 	}
 	

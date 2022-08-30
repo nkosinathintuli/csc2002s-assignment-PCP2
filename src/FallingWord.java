@@ -101,6 +101,7 @@ public class FallingWord {
 	public synchronized void resetPos() {
 		if (isHungry) {
 			setX(0);
+			
 		} else {
 			setY(0);
 		}
@@ -129,6 +130,10 @@ public class FallingWord {
 		setY(y+inc);
 	}
 
+	public synchronized  void drop() {
+		dropped=true;
+	}
+
 	public synchronized  void drift(int inc) { // move word to the right *
 		setX(x+inc);
 	}
@@ -140,5 +145,10 @@ public class FallingWord {
 	public synchronized  boolean drifted() { // check if word has drifted off the screen to the right *
 		return drifted; 
 	}
+
+	public synchronized  boolean isHungry() { // check if word is hungry *
+		return isHungry;
+	}
+
 
 }

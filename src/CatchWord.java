@@ -38,9 +38,14 @@ public class CatchWord extends Thread {
 				FallingWord match = words[i]; //save the matched falling word and look for a duplicate
 				while(i<noWords){
 					if(words[i].matchWord(target)){ // continue to look for another match
+
 						if(match.getY()<words[i].getY()){
 							match=words[i]; //save the one that is lower on the screen
 							//break; //stop looking for duplicates as soon as you find the first one
+							if (match.isHungry())
+							{
+								break;
+							}
 						}
 					}
 					i++;

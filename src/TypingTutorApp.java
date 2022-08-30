@@ -42,7 +42,7 @@ public class TypingTutorApp {
 	static Thread gameWindowThread;
 	static Thread scoreThread;
 	
-	public static void setupGUI(int frameX,int frameY,int yLimit) {
+	public static void setupGUI(int frameX,int frameY,int xLimit,int yLimit) {
 		// Frame init and dimensions
     	JFrame frame = new JFrame("Typing Tutor"); 
     	frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -53,7 +53,7 @@ public class TypingTutorApp {
       	g.setSize(frameX,frameY);
  
 		gameWindow = new GamePanel(words,yLimit,done,started,won);
-		gameWindow.setSize(frameX,yLimit+100);
+		gameWindow.setSize(xLimit+100,yLimit+100);
 	    g.add(gameWindow);
 	    
 	    JPanel txt = new JPanel();
@@ -204,7 +204,7 @@ public class TypingTutorApp {
 		hungryWrdShft = new HungryWordMover(words[noWords-1],dict,score,startLatch,done,pause);
         //word movers waiting on starting line
      	for (int i=0;i<noWords-1;i++) {
-     		wrdShft[i] .start();
+     		wrdShft[i].start();
      	}
 		hungryWrdShft.start();
 	}
@@ -241,10 +241,12 @@ public static void main(String[] args) {
 		if (args.length==2) {
 					totalWords=Integer.parseInt(args[0]);  //total words to fall
 					noWords=Integer.parseInt(args[1]); // total words falling at any point
+					noWords++; //add one for the hungry word
 					assert(totalWords>=noWords); // 
 		} else if (args.length==3) {
 					totalWords=Integer.parseInt(args[0]);  //total words to fall
 					noWords=Integer.parseInt(args[1]); // total words falling at any point
+					noWords++; //add one for the hungry word
 					assert(totalWords>=noWords); // 
 					String[] tmpDict=getDictFromFile(args[2]); //file of words
 					if (tmpDict!=null)
@@ -261,7 +263,7 @@ public static void main(String[] args) {
 		CatchWord.setScore(score);  //class setter - static method
 		CatchWord.setFlags(done,pause); //class setter - static method
 
-		setupGUI(frameX, frameY, yLimit);  
+		setupGUI(frameX, frameY, xLimit,yLimit);  
 	
  		startLatch = new CountDownLatch(1); //REMOVE so threads can start at once
     	createThreads();

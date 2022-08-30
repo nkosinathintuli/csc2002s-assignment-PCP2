@@ -33,10 +33,10 @@ public class GamePanel extends JPanel implements Runnable {
 		public void paintComponent(Graphics g) {
 		    int width = getWidth()-borderWidth*2;
 		    int height = getHeight()-borderWidth*2;
-		    g.clearRect(borderWidth,borderWidth,width,height);//the active space
+		    g.clearRect(0,0,width+borderWidth,height);//the active space
 		    g.setColor(Color.pink); //change colour of pen
 		    g.fillRect(borderWidth,height,width,borderWidth); //draw danger zone
-
+			
 		    g.setColor(Color.black);
 		    g.setFont(new Font("Arial", Font.PLAIN, 26));
 		   //draw the words
@@ -47,13 +47,14 @@ public class GamePanel extends JPanel implements Runnable {
 		    }
 		    else if (!done.get()) {
 		    	for (int i=0;i<noWords-1;i++){	    	
-		    		g.drawString(words[i].getWord(),words[i].getX()+borderWidth,words[i].getY());
-					//if (i!=noWords-1) collide(words[i],i,g);
+		    		g.drawString(words[i].getWord(),words[i].getX()+borderWidth,words[i].getY()+borderWidth);
+					collide(words[i],i,g);
+					//System.out.println(words[i].getX()+borderWidth+" : "+words[i].getY());
 		    	
 		    	}
 				g.setColor(Color.green); //set the colour of the hungry word
-		    	g.fillRect(borderWidth,height,0,borderWidth); 
-				g.drawString(words[noWords-1].getWord(),words[noWords-1].getX()+borderWidth,words[noWords-1].getY());
+		    	//g.fillRect(borderWidth,height,0,borderWidth); 
+				g.drawString(words[noWords-1].getWord(),words[noWords-1].getX(),words[noWords-1].getY());
 		    	g.setColor(Color.lightGray); //change colour of pen
 		    	g.fillRect(borderWidth,0,width,borderWidth);			
 		   }
@@ -99,13 +100,13 @@ public class GamePanel extends JPanel implements Runnable {
 			int Yb1 = Yb + deltaYb;
 			boolean collision = false;
 			collision = (Xa1 >= Xb && Xa1 <= Xb1 && Ya1 >= Yb && Ya1 <= Yb1);
-			collision = collision || (Xa >= Xb && Xa <= Xb1 && Ya1 >= Yb && Ya1 <= Yb1);
+			collision = collision || (Xa >= Xb && Xa <= Xb1 && Ya1 >= Yb && Ya1 <= Yb1); 
 			collision = collision || (Xa1 >= Xb && Xa1 <= Xb1 && Ya >= Yb && Ya <= Yb1);
 			collision = collision || (Xa >= Xb && Xa <= Xb1 && Ya >= Yb && Ya <= Yb1);
+			collision = collision || (Xa <= Xb && Xa1 >= Xb1 && (Ya >= Yb && Ya <= Yb1 || Ya1 >= Yb && Ya1 <= Yb1));
 			
-			//collision = (Xa1 >= Xb && Ya1 >= Yb || Xa <= Xb1 && Ya <= Yb1 || Xa1 >= Xb && Ya <= Yb1 || Xa <= Xb1 && Ya1 >= Yb);
 			if(collision) {
-				theword.setY(maxY+1);
+				theword.drop();
 				words[pos]= theword;
 				//System.out.print(theword.getWord());
 			}

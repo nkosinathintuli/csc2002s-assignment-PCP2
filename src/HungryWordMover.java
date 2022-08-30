@@ -24,12 +24,22 @@ public class HungryWordMover extends Thread {
 		this.done=d;
 		this.pause=p;
 	}
-	
-	
+
+	public void pause() {
+		int ms = 1000*10*1;
+		try {
+			sleep(ms);
+			System.out.println("Paused for " + ms + " milliseconds");
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		};	
+	}
 	
 	public void run() {
 
 		//System.out.println(myWord.getWord() + " falling speed = " + myWord.getSpeed());
+		
 		try {
 			System.out.println(myWord.getWord() + " waiting to start (hungryword)" );
 			startLatch.await();
@@ -37,7 +47,9 @@ public class HungryWordMover extends Thread {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} //wait for other threads to start
+
 		System.out.println(myWord.getWord() + " started (hungryword)" );
+		String myWordString = myWord.getWord();
 		while (!done.get()) {				
 			//animate the word
 			while (!myWord.drifted() && !done.get()) {
@@ -49,7 +61,12 @@ public class HungryWordMover extends Thread {
 						e.printStackTrace();
 					};		
 					while(pause.get()&&!done.get()) {};
+					// if (!myWordString.equals(myWord.getWord())) {
+					// 	pause();
+					// 	myWordString = myWord.getWord();
+					// }
 			}
+			
 			if (!done.get() && myWord.drifted()) {
 				score.missedWord();
 				myWord.resetWord();
